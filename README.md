@@ -1,11 +1,11 @@
 # prod_proofs
 
-This repo contains the proofs of the major results of productive numbers. Translating them into lean is a major headache and your help is needed. All informal proofs are included below:
+This repo contains the proofs of the major results of productive numbers. The proofs are mostly straightforward, but translating them into lean has been a massive headache - in particular nested induction over lists of lists. If you're able to fix these lean proofs, would be much appreciated :)
 
 
 ## Definitions
 
-Definition of a productive number. This is written up (albeit messily in defs.lean).
+Definition of a productive number. This is written up (albeit messily) in defs.lean.
 
 ``inductive prod_num : Type
 
@@ -38,7 +38,7 @@ Graft:
 
 ### Isomorphism
 
-Every natural number has a unique productive representation (up to padding).
+Every natural number has a unique productive representation (up to padding). Various parts of this proof have all failed miserably in nat_iso.lean
 
 (existence is clear)
 
@@ -52,7 +52,7 @@ Uniqueness (strong induction):
 
 ### Poset
 
-$\leq$ is a partial order. Proofs are straightforward.
+$\leq$ is a partial order. Proofs are straightforward, but lean translations tricky (see poset.lean)
 
 Reflexivity:
 * $0 \leq 0$ by (1)
@@ -79,10 +79,15 @@ Transitivity ($x \leq y \leq z \implies x \leq z$):
 
 ### Lattice
 
-graft ($\lor$) and prune ($\land$) induce a distributive lattice. Restricting to sublattices (i.e. $\{x : 0 \leq x \leq n\}$), gives a Heyting algebra. If $n$ is square-free (and $\bot = []$), its a Boolean algebra.
+graft ($\lor$) and prune ($\land$) induce a distributive lattice. Restricting to sublattices (i.e. $\{x : 0 \leq x \leq n\}$), gives a Heyting algebra. If $n$ is square-free (and $\bot = []$), its a Boolean algebra. Lean proofs not even attempted yet.
+
+The partial order of a lattice is usually defined as $a \leq b \iff a \land b = a$. This coincides with the definition of inequality above since:
+* $0 \land b = 0$. Thus $0 \leq x, \forall x$.
+* Suppose $a_i \leq b_i$. Then $a_i \land b_i = a_i$. Thus $a \land b = [a_1 \land b_1, ..., a_n \land b_n] =_{(IH)} = [a_1, ..., a_n] = a$
+Other direction similar.
 
 
-Idempontence:
+Idempotence:
 * $a \lor a = a$
     - ($a=0$) $0 \lor 0 = 0$
     - ($a = [a_1, ..., a_n]$). IH: $a_i \lor a_i = a_i$.
@@ -92,7 +97,7 @@ Idempontence:
 Commutativity: dull
 
 
-Associativity:
+Associativity: exceedingly dull
 
 
 Aborption:
@@ -131,3 +136,4 @@ Heyting (for every $a, b$ there is a greatest $x$ s.t. $a \land x \leq b$)
 Boolean (every $a$ has a complement $\neq a$ such that $a \lor \neg a = \top, a \land \neg a = []$)
 * This only works for sublattices of depth at most 2 (productive equivalent of square-free)
 * Since $\top$ is square-free, it is just a list of $0$ and $[]$. So the complement of $a$ is just swapping $0$ and $[]$ in all the positions which are $[]$ in $\top$ originally (to maintain closure).
+ - eg in the sublattice of 30 ($[[], [], []]$), the complement of $[[], 0, []]$ is $[0, [], 0]$.
