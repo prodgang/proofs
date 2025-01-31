@@ -8,8 +8,11 @@ This repo contains the proofs of the major results of productive numbers. Transl
 Definition of a productive number. This is written up (albeit messily in defs.lean).
 
 ``inductive prod_num : Type
+
 | p0 : prod_num
+
 | pli : List prod_num → prod_num
+
 deriving Repr``
 
 By definition, padding zeros does not change a prod, so $[x, y] = [x, y, p0]$ and so on.
@@ -19,8 +22,8 @@ Interpretation:
 * $eval([x_1, x_2, ..., x_n]) = 2^{eval(x_1)} \times 3^{eval(x_2)} \times ... \times p_n^{eval(x_n)}$ (where $p_n$ is the nth prime)
 
 Inequality:
-* $\forall x, 0 \leq x$
-* $x_1 \leq y_1, ..., x_n \leq y_n \implies [x_1, ..., x_n] \leq [y_1, ..., y_n]$ (can assume same length by padding)
+1. $\forall x, 0 \leq x$
+2. $x_1 \leq y_1, ..., x_n \leq y_n \implies [x_1, ..., x_n] \leq [y_1, ..., y_n]$ (can assume same length by padding)
 
 Prune:
 * $0 \land x = 0 = x \land 0$
@@ -40,8 +43,8 @@ Every natural number has a unique productive representation (up to padding).
 (existence is clear)
 
 Uniqueness (strong induction):
-* Base case for $0$ and $1$ are immediate
-* IH: every $2 \leq m < n$ has unique representation.
+* Base cases for $0$ and $1 = [] = [0] = ...$ are immediate
+* IH: every $2 \leq m < n$ has productive unique representation.
 * By unique factorisation, $n$ uniquely factorises as $2^{e_1} \times 3^{e_2} \times ... \times p_k^{e_k}$
 * Since every $e_i < n$, by IH each $e_i$ has unique productive representation $p(e_i)$
 * So $[p(e_1), p(e_2), ..., p(e_k)]$ is the unique productive representation of $n$.
@@ -52,15 +55,15 @@ Uniqueness (strong induction):
 $\leq$ is a partial order. Proofs are straightforward.
 
 Reflexivity:
-* $0 \leq 0$
-* Suppose $x_1 \leq x_1, ..., x_n \leq x_n$. Then $[x_1, ..., x_n] \leq [x_1, ..., x_n]$.
+* $0 \leq 0$ by (1)
+* Suppose $x_1 \leq x_1, ..., x_n \leq x_n$. Then $[x_1, ..., x_n] \leq [x_1, ..., x_n]$ by (2).
 
 Anti-symmetry ($x \leq y \implies y \leq x \implies x = y$):
 * ($x=0$) If $y \leq 0$ means $y = 0$ by (1). 
 * ($y=0$) same as above
 * ($x = [x_1, ...,x_n], y = [y_1, ..., y_n]$). IH: $x_i \leq y_i \implies y_i \leq x_i \implies x_i = y_i$. 
     - $x \leq y$ implies $x_i \leq y_i$ by (2).
-    -  Similary, $y \leq y$ implies $y_i \leq x_i$
+    -  Similary, $y \leq x$ implies $y_i \leq x_i$
     - By IH, $x_i = y_i$. Therefore, $[x_1, ..., x_n] = [y_1, ..., y_n]$, so $x = y$.
 
 
@@ -76,7 +79,7 @@ Transitivity ($x \leq y \leq z \implies x \leq z$):
 
 ### Lattice
 
-graft ($\lor$) and prune ($\land$) induce a distributive lattice. Restricting to sublattices (i.e. $\{x : [] \leq x \leq n}), gives a Heyting algebra. If $n$ is square-free, its a Boolean algebra.
+graft ($\lor$) and prune ($\land$) induce a distributive lattice. Restricting to sublattices (i.e. $\{x : 0 \leq x \leq n\}$), gives a Heyting algebra. If $n$ is square-free (and $\bot = []$), its a Boolean algebra.
 
 
 Idempontence:
@@ -97,21 +100,22 @@ Aborption:
     - ($a=0$). $0 \land b = 0$ and $0 \lor 0 = 0$.
     - ($b=0$). $a \land 0 = 0$ and $a \lor a = a$ (by idempontence).
     - ($a=[a_1, ..., a_n], b=[b_1, ..., b_n]$). IH: $a_i \lor (a_i \land b_i) = a_i$. 
-        - Then $a \lor (a \land b) = a \lor [a_1 \land b_1, ..., a_n \land b_n] = [a_1 \lor (a_1 \land b_1), ..., a_n \lor (a_n \land b_n)] =(IH)= [a_1, ..., a_n] = a$
+        - Then $a \lor (a \land b) = a \lor [a_1 \land b_1, ..., a_n \land b_n] = [a_1 \lor (a_1 \land b_1), ..., a_n \lor (a_n \land b_n)] =_{(IH)} [a_1, ..., a_n] = a$
 * $a \land (a \lor b) = a$
     - ($a=0$). $0 \land (0 \lor b) = 0 \land b = 0$
     - ($b=0$). $a \lor 0 = a$ and $a \land a = a$ (by idempotence)
     - ($a=[a_1, ..., a_n], b=[b_1, ..., b_n]$). As with other absorption rule
 
-Distributivity ($a \land (b \lor c) = (a \land b) \lor (a \land c)$):
+Distributivity ($a \land (b \lor c) = (a \land b) \lor (a \land c)$ ):
 * ($a=0$) $0 \land (b \lor c) = 0 = 0 \lor 0 = (0 \land b) \lor (0 \land c)$
 * ($b=0$) $a \land (0 \lor c) = a \land c = 0 \lor (a \land c) = (a \land 0) \lor (a \land c)$
 * ($c=0$) same as $b=0$ case
 * $a = [a_1, ..., a_n], b = [b_1, ..., b_n], c = [c_1, ..., c_n]$. IH: $a_i \land (b_i \lor c_i) = (a_i \land b_i) \lor (a_i \land c_i)$
-    - $a \land (b \lor c) = a \land [b_1 \lor c_1, ..., b_n \lor c_n] = [a_1 \land (b_1 \lor c_1), ..., a_n \land (b_n \lor c_n)] =(IH)= [(a_1 \land b_1) \lor (a_1 \land c_1), ..., (a_n \land b_n) \lor (a_n \land c_n)] = (a \land b) \lor (a \land c)$
+    - $a \land (b \lor c) = a \land [b_1 \lor c_1, ..., b_n \lor c_n] = [a_1 \land (b_1 \lor c_1), ..., a_n \land (b_n \lor c_n)]$
+   
+   $=_{(IH)} [(a_1 \land b_1) \lor (a_1 \land c_1), ..., (a_n \land b_n) \lor (a_n \land c_n)] = (a \land b) \lor (a \land c)$
 
 
-PROBLEM: How can induction start at 0, when its not in the lattice??
 
 
 Heyting (for every $a, b$ there is a greatest $x$ s.t. $a \land x \leq b$)
@@ -124,9 +128,6 @@ Heyting (for every $a, b$ there is a greatest $x$ s.t. $a \land x \leq b$)
 
 
 
-Boolean (every $a$ has a complement $\neq a$ such that $a \lor \neg a = \top, a \land \neg a = \bottom$)
+Boolean (every $a$ has a complement $\neq a$ such that $a \lor \neg a = \top, a \land \neg a = []$)
 * This only works for sublattices of depth at most 2 (productive equivalent of square-free)
-* ($a = 0$) Set $\neg a = \top$. This clearly works
-* ($a = [a_1, ..., a_n]$) IH $a_i$ has complement $\neg a_i$. 
-    - Choosing $\neg a = [\neg a_1, ..., \neg a_n]$ does NOT work because $[a_1, ..., a_n] \land [\neg a_1, ..., \neg a_n] = [[], ..., []] \neq []$ 
-* Since $\top$ is square-free, it just a list of $0$ and $[]$. So the complement of $a$ is just swapping $0$ and $[]$ in all the positions (which are $[]$ in $\top$ originally to maintain closure).
+* Since $\top$ is square-free, it is just a list of $0$ and $[]$. So the complement of $a$ is just swapping $0$ and $[]$ in all the positions which are $[]$ in $\top$ originally (to maintain closure).

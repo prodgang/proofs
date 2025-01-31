@@ -14,8 +14,6 @@ inductive prod_num : Type
 deriving Repr
 
 
-#check prod_num.p0
-
 
 /-- Pad a list with n zeros -/
 def pad_n (l : List prod_num) (n : Nat) : List prod_num :=
@@ -46,9 +44,6 @@ lemma replicate_comm {n : ℕ} : a :: List.replicate n a = List.replicate n a ++
     rw [h1, hd, prod_pad]
 
 
--- List of primes
-def primes : List Nat := [2, 3, 5, 7]
-
 
 noncomputable def prime_at (n : Nat) : Nat :=
   Nat.nth Nat.Prime n
@@ -62,10 +57,8 @@ noncomputable def eval_prod : prod_num → Nat
       match l with
       | [] => 1
       | x :: xs => (prime_at i ^ eval_prod x) * (eval_list xs (i + 1))
-      --eval_list xs (i + 1) (acc * (prime_at i ^ eval_prod x))
       termination_by sizeOf l
     eval_list l 0
-
 termination_by x => sizeOf x
 decreasing_by
   simp_wf
@@ -103,19 +96,6 @@ decreasing_by
   exact Nat.factorization_lt (Nat.nth Nat.Prime i) n_neq_0
 
 
-
--- def pad_with_zeros : prod_num → prod_num → (prod_num × prod_num)
---   | .p0, p2 => (.p0, p2)
---   | p1, .p0 => (p1, .p0)
---   | .pli l1, .pli l2 =>
---   if l1.length ≥ l2.length then
---     (.pli l1, .pli (pad_n l2 (l1.length - l2.length)))
---   else
---     (.pli (pad_n l1 (l2.length - l1.length)), .pli l2)
-
--- #eval pad_with_zeros (prod_num.pli [prod_num.p0]) (prod_num.pli [prod_num.p0, prod_num.pli []])
-
-
 def prod_leq : prod_num → prod_num → Prop
 | .p0, _ => True
 | .pli _, .p0 => False
@@ -127,14 +107,12 @@ def prod_leq : prod_num → prod_num → Prop
 termination_by px _ => px
 decreasing_by
   simp_wf
-
   simp_wf
   linarith
-
   simp_wf
 
 def prod_num.as_list : prod_num → List prod_num
-| .p0 => []
+| .p0 => [] -- shouldnt ever be called
 | .pli xs => xs
 
 def prune : prod_num → prod_num → prod_num

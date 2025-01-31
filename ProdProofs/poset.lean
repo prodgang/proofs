@@ -19,7 +19,6 @@ lemma prod_leq_refl (p: prod_num) : prod_leq p p := by
         exact prod_leq_refl (prod_num.pli tail)
 termination_by p
 decreasing_by
-  -- Subst to clear up structure
   rename_i orig h t ps ho
   simp [sizeOf]
   sorry
@@ -104,7 +103,7 @@ lemma prod_leq_antisymm (p q : prod_num) : prod_leq p q → prod_leq q p → p =
         case nil => simp [← prod_leq_cons_then_zero (hps::tps) h1]
         case cons hqs tqs => sorry -- the only case that actually counts...
 
-theorem prod_leq_trans_claude (x y z : prod_num) : prod_leq x y → prod_leq y z → prod_leq x z
+theorem prod_leq_trans_2 (x y z : prod_num) : prod_leq x y → prod_leq y z → prod_leq x z
 | .p0, _, _ => by simp
 | .pli xs, .p0, _ => by simp
 | .pli xs, .pli ys, .p0 => by simp
@@ -112,8 +111,8 @@ theorem prod_leq_trans_claude (x y z : prod_num) : prod_leq x y → prod_leq y z
   have hxy : ∀ i, i < xs.length → prod_leq (xs.get i) (ys.get i), from hxy,
   have hyz : ∀ i, i < ys.length → prod_leq (ys.get i) (zs.get i), from hyz,
   apply and.intro;
-  { apply prod_leq_trans_claude, assumption },
-  { apply prod_leq_trans_claude, assumption }
+  { apply prod_leq_trans_2, assumption },
+  { apply prod_leq_trans_2, assumption }
 
 
 end ProdProofs
